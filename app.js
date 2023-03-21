@@ -17,17 +17,21 @@ app.use(function(req, res, next) {
 
 app.use("/users",userRouter);
 
-//Create tables and update if neccesary
-await UsersModel.sync({ force: true });
-
 try {
-    await db.authenticate()
-    console.log("conexion a la BD OK")
+    await db.authenticate();
+    console.log("conexion a la BD OK");
+
+    //Create tables and update if neccesary
+    await db.sync({force:true}).then(() => {
+        const port = PORTAPI //8000
+        app.listen(port,()=>{
+            console.log(`Servidor ok en el puerto ${port}`)
+        })
+    });
+
 } catch (error) {
     console.log(`conexion fallida por el error ${error}`)
 }
 
-const port = PORTAPI //8000
-app.listen(port,()=>{
-    console.log(`Servidor ok en el puerto ${port}`)
-})
+    
+
